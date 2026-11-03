@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>879</width>
+    <height>864</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Takt</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* Общий фон приложения */
+QMainWindow,
+QWidget#centralwidget,
+QWidget#todayTab,
+QWidget#kanbanTab,
+QWidget#calendarTab {
+    background-color: #F3F3F3;
+    color: #000000;
+}
+
+/* Область вкладок и рабочая зона */
+QTabWidget::pane {
+    background-color: #F3F3F3;
+    border: 1px solid #DCDCDC;
+    top: -1px;
+}
+
+QTabBar {
+    background-color: #F3F3F3;
+}
+
+/* Вкладки */
+QTabBar::tab {
+    background-color: #FBE7EE;
+    color: #000000;
+    border: 1px solid #EED5DE;
+    border-radius: 7px;
+    padding: 8px 18px;
+    margin-right: 4px;
+}
+
+QTabBar::tab:selected {
+    background-color: #F2C2D1;
+}
+
+QTabBar::tab:hover {
+    background-color: #F8DDE6;
+}
+
+/* Надписи */
+QLabel {
+    color: #000000;
+    background-color: transparent;
+}
+
+/* Поле выбора даты */
+QDateEdit {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+/* Таблица */
+QTableWidget {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    gridline-color: #E8E8E8;
+    selection-background-color: #F8DDE6;
+    selection-color: #000000;
+}
+
+/* Заголовки таблицы */
+QHeaderView::section {
+    background-color: #FBE7EE;
+    color: #000000;
+    border: 1px solid #EED5DE;
+    padding: 6px;
+}
+
+/* Блок автоматического расписания */
+QGroupBox#scheduleGroupBox {
+    background-color: #F7F7F7;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 8px;
+    margin-top: 14px;
+    padding: 10px;
+}
+
+QGroupBox#scheduleGroupBox::title {
+    subcontrol-origin: margin;
+    left: 12px;
+    padding: 0 5px;
+}
+
+/* Поле расписания */
+QTextBrowser#scheduleBrowser {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+/* Кнопка &quot;Составить расписание&quot; */
+QPushButton#planDayButton {
+    background-color: #E8A5BA;
+    color: #000000;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 16px;
+}
+
+QPushButton#planDayButton:hover {
+    background-color: #DB91AA;
+}
+
+QPushButton#planDayButton:pressed {
+    background-color: #CC7E99;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Мой день&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="todayTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <attribute name="title">
+        <string>Мой день</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="todayLabel">
+          <property name="font">
+           <font>
+            <family>Georgia</family>
+            <pointsize>36</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Расписание на мой день</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="minimumSize">
+             <size>
+              <width>45</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>18</pointsize>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="text">
+             <string>Дата</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateEdit" name="selectedDateEdit">
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>18</pointsize>
+             </font>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="addTaskButton">
+            <property name="font">
+             <font>
+              <pointsize>-1</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+    background-color: #E8A5BA;
+    color: #43363D;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 16px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #DB91AA;
+}
+
+QPushButton:pressed {
+    background-color: #CC7E99;
+}</string>
+            </property>
+            <property name="text">
+             <string>Добавить задачу</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="editTaskButton">
+            <property name="font">
+             <font>
+              <pointsize>-1</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+    background-color: #F2C2D1;
+    color: #43363D;
+    border: 1px solid #EAB1C3;
+    border-radius: 9px;
+    padding: 9px 16px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #E9B1C3;
+}
+
+QPushButton:pressed {
+    background-color: #DB9BAF;
+}</string>
+            </property>
+            <property name="text">
+             <string>Изменить задачу</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="deleteTaskButton">
+            <property name="font">
+             <font>
+              <pointsize>-1</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+    background-color: #F8DDE6;
+    color: #43363D;
+    border: 1px solid #F1D0DB;
+    border-radius: 9px;
+    padding: 9px 16px;
+    font-size: 15px;
+	font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #F1C9D7;
+}</string>
+            </property>
+            <property name="text">
+             <string>Удалить задачу</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="tasksTable">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>600</width>
+            <height>250</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Georgia</family>
+            <pointsize>18</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="columnCount">
+           <number>5</number>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>120</number>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Название</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Georgia</family>
+             <pointsize>15</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Дата</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Georgia</family>
+             <pointsize>15</pointsize>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Длительность</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Georgia</family>
+             <pointsize>15</pointsize>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Категория</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Georgia</family>
+             <pointsize>15</pointsize>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Статус</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Georgia</family>
+             <pointsize>15</pointsize>
+            </font>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="scheduleGroupBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>350</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>400</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Georgia</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>true</italic>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string>Автоматическое расписание</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QPushButton" name="planDayButton">
+             <property name="font">
+              <font>
+               <family>Georgia</family>
+               <pointsize>14</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Составить расписание</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextBrowser" name="scheduleBrowser"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="kanbanTab">
+       <attribute name="title">
+        <string>Канбан-доска</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="kanbanLabel">
+          <property name="font">
+           <font>
+            <family>Georgia</family>
+            <pointsize>36</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Канбан-доска</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QGroupBox" name="todoGroupBox">
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>16</pointsize>
+              <weight>50</weight>
+              <italic>true</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 9px;
+    margin-top: 22px;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    background-color: #F8DDE6;
+    color: #000000;
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 5px 14px;
+    border-radius: 6px;
+}
+  </string>
+            </property>
+            <property name="title">
+             <string>Нужно сделать</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QListWidget" name="todoList">
+               <property name="styleSheet">
+                <string notr="true">QListWidget {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #E5E5E5;
+    border-radius: 7px;
+    padding: 5px;
+}
+
+QListWidget::item {
+    padding: 10px;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+QListWidget::item:selected {
+    background-color: #F8DDE6;
+    color: #000000;
+}</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="progressGroupBox">
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>16</pointsize>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 9px;
+    margin-top: 22px;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    background-color: #F2C2D1;
+    color: #000000;
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 5px 14px;
+    border-radius: 6px;
+}
+  </string>
+            </property>
+            <property name="title">
+             <string>В процессе</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QListWidget" name="progressList">
+               <property name="styleSheet">
+                <string notr="true">QListWidget {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #E5E5E5;
+    border-radius: 7px;
+    padding: 5px;
+}
+
+QListWidget::item {
+    padding: 10px;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+QListWidget::item:selected {
+    background-color: #F8DDE6;
+    color: #000000;
+}</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="doneGroupBox">
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>16</pointsize>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 9px;
+    margin-top: 22px;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    background-color: #E8A5BA;
+    color: #000000;
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 5px 14px;
+    border-radius: 6px;
+}
+  </string>
+            </property>
+            <property name="title">
+             <string>Готово</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QListWidget" name="doneList">
+               <property name="styleSheet">
+                <string notr="true">QListWidget {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #E5E5E5;
+    border-radius: 7px;
+    padding: 5px;
+}
+
+QListWidget::item {
+    padding: 10px;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+QListWidget::item:selected {
+    background-color: #F8DDE6;
+    color: #000000;
+}</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="calendarTab">
+       <attribute name="title">
+        <string>Календарь</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="calendarlabel">
+          <property name="font">
+           <font>
+            <family>Georgia</family>
+            <pointsize>36</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Календарь</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QCalendarWidget" name="calendarWidget">
+            <property name="styleSheet">
+             <string notr="true">QCalendarWidget {
+    background-color: #F7F7F7;
+    color: #000000;
+}
+
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+    background-color: #F2C2D1;
+}
+
+QCalendarWidget QToolButton {
+    color: #000000;
+    background-color: transparent;
+    border: none;
+    padding: 6px;
+    font-weight: bold;
+}
+
+QCalendarWidget QAbstractItemView {
+    background-color: #FFFFFF;
+    color: #000000;
+    selection-background-color: #F2C2D1;
+    selection-color: #000000;
+    border: 1px solid #D8D8D8;
+}</string>
+            </property>
+            <property name="verticalHeaderFormat">
+             <enum>QCalendarWidget::NoVerticalHeader</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="calendarTasksGroupBox">
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>14</pointsize>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 9px;
+    margin-top: 22px;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    background-color: #F8DDE6;
+    color: #000000;
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 5px 14px;
+    border-radius: 6px;
+}
+  </string>
+            </property>
+            <property name="title">
+             <string>Задачи на выбранный день</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QListWidget" name="calendarTasksList">
+               <property name="styleSheet">
+                <string notr="true">QListWidget {
+    background-color: #FAFAFA;
+    color: #000000;
+    border: 1px solid #E5E5E5;
+    border-radius: 7px;
+    padding: 5px;
+}
+
+QListWidget::item {
+    padding: 10px;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+QListWidget::item:selected {
+    background-color: #F8DDE6;
+    color: #000000;
+}</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>879</width>
+     <height>37</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
