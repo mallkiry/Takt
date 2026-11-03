@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CategoryDialog</class>
+ <widget class="QDialog" name="CategoryDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Категории задач</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog#CategoryDialog {
+    background-color: #F3F3F3;
+    color: #000000;
+}
+
+QListWidget#categoriesList {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+QListWidget#categoriesList::item {
+    padding: 10px;
+}
+
+QListWidget#categoriesList::item:selected {
+    background-color: #F8DDE6;
+    color: #000000;
+}
+
+QPushButton {
+    color: #000000;
+    border-radius: 8px;
+    padding: 9px 12px;
+}
+
+QPushButton#addCategoryButton {
+    background-color: #E8A5BA;
+    border: 1px solid #E8A5BA;
+}
+
+QPushButton#renameCategoryButton {
+    background-color: #F2C2D1;
+    border: 1px solid #F2C2D1;
+}
+
+QPushButton#colorCategoryButton {
+    background-color: #F6D1DD;
+    border: 1px solid #F6D1DD;
+}
+
+QPushButton#deleteCategoryButton {
+    background-color: #F8DDE6;
+    border: 1px solid #F8DDE6;
+}
+
+QPushButton:hover {
+    border: 1px solid #D48FA7;
+}
+</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QListWidget" name="categoriesList"/>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QPushButton" name="addCategoryButton">
+         <property name="text">
+          <string>Добавить</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="renameCategoryButton">
+         <property name="text">
+          <string>Переименовать</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="colorCategoryButton">
+         <property name="text">
+          <string>Выбрать цвет</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteCategoryButton">
+         <property name="text">
+          <string>Удалить</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
