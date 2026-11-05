@@ -1,5 +1,4 @@
 import sys
-from pathlib import Path
 import sqlite3
 
 from PyQt6 import uic
@@ -14,9 +13,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        ui_path = Path(__file__).resolve().parent / "app" / \
-            "design_ui" / "main_window.ui"
-        uic.loadUi(str(ui_path), self)
+        uic.loadUi("app/design_ui/main_window.ui", self)
+
         self.tasksTable.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.Stretch
         )
@@ -98,13 +96,11 @@ class MainWindow(QMainWindow):
 
     def delete_task(self):
         row = self.tasksTable.currentRow()
-
         if row == -1:
             QMessageBox.warning(
                 self, "Ошибка", "Выберите задачу для удаления"
             )
             return
-
         task_id = self.task_ids[row]
 
         answer = QMessageBox.question(
@@ -132,11 +128,7 @@ class TaskDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        ui_path = (
-            Path(__file__).resolve().parent
-            / "app" / "design_ui" / "task_dialog.ui"
-        )
-        uic.loadUi(str(ui_path), self)
+        uic.loadUi("app/design_ui/task_dialog.ui", self)
         self.taskDateEdit.setDate(QDate.currentDate())
 
         self.buttonBox.accepted.connect(self.accept)
