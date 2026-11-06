@@ -363,11 +363,24 @@ QPushButton:hover {
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
           <property name="columnCount">
-           <number>5</number>
+           <number>6</number>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>120</number>
           </attribute>
+          <column>
+           <property name="text">
+            <string>Готово</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Georgia</family>
+             <pointsize>15</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </column>
           <column>
            <property name="text">
             <string>Название</string>
@@ -376,8 +389,6 @@ QPushButton:hover {
             <font>
              <family>Georgia</family>
              <pointsize>15</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
             </font>
            </property>
           </column>
@@ -813,8 +824,27 @@ QListWidget::item:selected {
      <height>37</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Georgia</family>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Настройки</string>
+    </property>
+    <addaction name="categoriesAction"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="categoriesAction">
+   <property name="text">
+    <string>Категории</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
