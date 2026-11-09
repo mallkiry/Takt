@@ -6,3 +6,7 @@ __pycache__/
 .DS_Store
 build/
 dist/
+takt.db
+takt.db-journal
+takt.db-wal
+takt.db-shm
