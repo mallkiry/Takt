@@ -10,7 +10,11 @@ class TaskDialog(QDialog):
         super().__init__()
 
         uic.loadUi("app/design_ui/task_dialog.ui", self)
+        self.taskTimeEdit.setEnabled(False)
+
+        self.fixedTimeCheckBox.toggled.connect(self.taskTimeEdit.setEnabled)
         self.taskDateEdit.setDate(QDate.currentDate())
+        self.taskDateEdit.setDisplayFormat("dd.MM.yyyy")
 
         connection = sqlite3.connect("takt.db")
         cursor = connection.cursor()

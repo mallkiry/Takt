@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>879</width>
-    <height>864</height>
+    <width>918</width>
+    <height>968</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -439,6 +442,32 @@ QPushButton:hover {
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <family>Georgia</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Описание выбранной задачи</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="descriptionBrowser">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="placeholderText">
+           <string>Выберите задачу, чтобы посмотреть описание</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="scheduleGroupBox">
           <property name="minimumSize">
            <size>
@@ -482,6 +511,13 @@ QPushButton:hover {
            </item>
            <item>
             <widget class="QTextBrowser" name="scheduleBrowser"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="exportScheduleButton">
+             <property name="text">
+              <string>Сохранить расписание в текстовый файл</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -820,7 +856,7 @@ QListWidget::item:selected {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>879</width>
+     <width>918</width>
      <height>37</height>
     </rect>
    </property>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
+    <width>511</width>
     <height>520</height>
    </rect>
   </property>
@@ -81,21 +81,21 @@ QDialogButtonBox QPushButton:hover {
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Длительность</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Категория</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Статус</string>
@@ -121,7 +121,7 @@ QDialogButtonBox QPushButton:hover {
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="8" column="1">
       <widget class="QSpinBox" name="durationSpinBox">
        <property name="suffix">
         <string> мин</string>
@@ -140,7 +140,7 @@ QDialogButtonBox QPushButton:hover {
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="9" column="1">
       <widget class="QComboBox" name="categoryComboBox">
        <property name="minimumSize">
         <size>
@@ -155,7 +155,7 @@ QDialogButtonBox QPushButton:hover {
        </item>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="10" column="1">
       <widget class="QComboBox" name="statusComboBox">
        <property name="minimumSize">
         <size>
@@ -194,6 +194,23 @@ QDialogButtonBox QPushButton:hover {
        </property>
        <property name="calendarPopup">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Время:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QTimeEdit" name="taskTimeEdit"/>
+     </item>
+     <item row="7" column="1">
+      <widget class="QCheckBox" name="fixedTimeCheckBox">
+       <property name="text">
+        <string>Указать время начала</string>
        </property>
       </widget>
      </item>
