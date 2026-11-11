@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>918</width>
-    <height>968</height>
+    <width>775</width>
+    <height>883</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -169,7 +169,7 @@ QPushButton#planDayButton:pressed {
           <property name="font">
            <font>
             <family>Georgia</family>
-            <pointsize>36</pointsize>
+            <pointsize>30</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -468,58 +468,39 @@ QPushButton:hover {
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="scheduleGroupBox">
+         <widget class="QPushButton" name="planDayButton">
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>350</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>400</height>
+            <height>50</height>
            </size>
           </property>
           <property name="font">
            <font>
-            <family>Georgia</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>true</italic>
-            <bold>false</bold>
+            <pointsize>-1</pointsize>
            </font>
           </property>
-          <property name="title">
-           <string>Автоматическое расписание</string>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #E8A5BA;
+    color: #43363D;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 16px;
+    font-size: 18px;
+}
+
+QPushButton:hover {
+    background-color: #DB91AA;
+}
+
+QPushButton:pressed {
+    background-color: #CC7E99;
+}</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <widget class="QPushButton" name="planDayButton">
-             <property name="font">
-              <font>
-               <family>Georgia</family>
-               <pointsize>14</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Составить расписание</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QTextBrowser" name="scheduleBrowser"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="exportScheduleButton">
-             <property name="text">
-              <string>Сохранить расписание в текстовый файл</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <property name="text">
+           <string>Составить расписание</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -849,6 +830,48 @@ QListWidget::item:selected {
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="progressLabel">
+      <property name="font">
+       <font>
+        <family>Georgia</family>
+        <pointsize>18</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Прогресс выполнения</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="tasksProgressBar">
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QProgressBar {
+    border: 1px solid #E8A5BA;
+    border-radius: 8px;
+    background-color: #F7E9EE;
+    text-align: center;
+    height: 20px;
+}
+
+QProgressBar::chunk {
+    background-color: #E8A5BA;
+    border-radius: 7px;
+}</string>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -856,7 +879,7 @@ QListWidget::item:selected {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>918</width>
+     <width>775</width>
      <height>37</height>
     </rect>
    </property>

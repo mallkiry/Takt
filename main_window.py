@@ -2,15 +2,17 @@ import sqlite3
 
 from PyQt6 import uic
 from PyQt6.QtCore import QDate, Qt, QTime
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QPixmap
 from PyQt6.QtWidgets import (
     QMainWindow, QDialog, QTableWidgetItem,
     QHeaderView, QMessageBox, QFileDialog
 )
+from datetime import datetime, timedelta, time
 
 from task_dialog import TaskDialog
 from category_dialog import CategoryDialog
-from datetime import datetime, timedelta, time
+from schedule_dialog import ScheduleDialog
+from success_dialog import SuccessDialog
 
 
 class MainWindow(QMainWindow):
@@ -19,6 +21,14 @@ class MainWindow(QMainWindow):
 
         uic.loadUi("app/design_ui/main_window.ui", self)
 
+        image = QPixmap("app/pictch/win.jpg")
+
+        image = image.scaled(
+            180, 150,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
+
         self.tasksTable.horizontalHeader().setHighlightSections(False)
 
         self.tasksTable.horizontalHeader().setSectionResizeMode(
@@ -26,8 +36,7 @@ class MainWindow(QMainWindow):
         )
 
         self.tasksTable.setWordWrap(True)
-        self.planDayButton.clicked.connect(self.plan_day)
-        self.exportScheduleButton.clicked.connect(self.export_schedule)
+        self.planDayButton.clicked.connect(self.open_schedule)
         self.addTaskButton.clicked.connect(self.open_task_dialog)
         self.editTaskButton.clicked.connect(self.edit_task)
 
@@ -154,16 +163,33 @@ class MainWindow(QMainWindow):
             self.tasksTable.setItem(i, 5, QTableWidgetItem(task[4]))
             if task[6] and task[4] != "Готово":
                 self.tasksTable.item(i, 4).setBackground(
-                    QColor(task[6])
-                )
+                    QColor(task[6]))
+
             if task[4] == "Готово":
                 for col in range(6):
                     self.tasksTable.item(i, col).setBackground(
-                        QColor("#D3D3D3")
-                    )
+                        QColor("#D3D3D3"))
 
         self.tasksTable.resizeRowsToContents()
         self.tasksTable.blockSignals(False)
+
+        total = len(tasks)
+        done = 0
+
+        for task in tasks:
+            if task[4] == "Готово":
+                done += 1
+
+        if total > 0:
+            percent = round(done / total * 100)
+
+            self.tasksProgressBar.setValue(percent)
+            self.tasksProgressBar.setFormat(
+                f"Выполнено: {done} из {total} ({percent}%)"
+            )
+        else:
+            self.tasksProgressBar.setValue(0)
+            self.tasksProgressBar.setFormat("Нет задач")
 
     def show_description(self):
         if not self.tasksTable.selectedItems():
@@ -193,6 +219,7 @@ class MainWindow(QMainWindow):
 
 # изменение статуса задачи при изменении флажка готовности
 
+
     def change_task_status(self, item):
         if item.column() != 0:
             return
@@ -217,6 +244,17 @@ class MainWindow(QMainWindow):
         connection.close()
 
         self.load_tasks()
+
+        total = self.tasksTable.rowCount()
+        done = 0
+
+        for row in range(total):
+            if self.tasksTable.item(row, 0).checkState() == Qt.CheckState.Checked:
+                done += 1
+
+        if total > 0 and done == total:
+            dialog = SuccessDialog()
+            dialog.exec()
 # редактирование задачи
 
     def edit_task(self):
@@ -346,134 +384,7 @@ class MainWindow(QMainWindow):
         dialog = CategoryDialog()
         dialog.exec()
 
-    def plan_day(self):
-        date = self.selectedDateEdit.date().toString("yyyy-MM-dd")
-        day = self.selectedDateEdit.date().toPyDate()
-
-        connection = sqlite3.connect("takt.db")
-        cursor = connection.cursor()
-
-        tasks = cursor.execute("""
-            SELECT title, duration, start_time
-            FROM tasks
-            WHERE task_date = ? AND status != 'Готово'
-            ORDER BY duration, id
-        """, (date,)).fetchall()
-
-        connection.close()
-
-        if not tasks:
-            self.scheduleBrowser.setPlainText(
-                "На выбранный день нет невыполненных задач"
-            )
-            return
-
-        fixed = []
-        free = []
-
-        for title, duration, start_time in tasks:
-            if duration <= 0:
-                QMessageBox.warning(
-                    self, "Ошибка",
-                    f"У задачи «{title}» некорректная длительность"
-                )
-                return
-
-            if start_time:
-                start = datetime.combine(
-                    day,
-                    datetime.strptime(start_time, "%H:%M").time()
-                )
-                end = start + timedelta(minutes=duration)
-                fixed.append((start, end, title))
-            else:
-                free.append((title, duration))
-
-        fixed.sort()
-
-        for i in range(1, len(fixed)):
-            if fixed[i][0] < fixed[i - 1][1]:
-                QMessageBox.warning(
-                    self,
-                    "Ошибка расписания",
-                    "Задачи с указанным временем пересекаются"
-                )
-                return
-
-        schedule = fixed.copy()
-
-        current = datetime.combine(day, time(9, 0))
-
-        for title, duration in free:
-            end = current + timedelta(minutes=duration)
-
-            for start_fixed, end_fixed, name in fixed:
-                if current < end_fixed and end > start_fixed:
-                    current = end_fixed
-                    end = current + timedelta(minutes=duration)
-
-            schedule.append((current, end, title))
-            current = end
-
-        schedule.sort()
-
-        lines = [
-            "Расписание на день",
-            self.selectedDateEdit.date().toString("dd.MM.yyyy"),
-            "",
-            f"{'Время':<30}Задача"
-        ]
-
-        for start, end, title in schedule:
-            period = f"{start:%H:%M}–{end:%H:%M}"
-
-            if start.date() != day or end.date() != day:
-                period = (
-                    f"{start:%d.%m %H:%M}–"
-                    f"{end:%d.%m %H:%M}"
-                )
-
-            lines.append(f"{period:<30}{title}")
-
-        self.scheduleBrowser.setPlainText("\n".join(lines))
-
-    def export_schedule(self):
-        text = self.scheduleBrowser.toPlainText()
-
-        if not text.startswith("Расписание на день"):
-            QMessageBox.warning(
-                self,
-                "Ошибка",
-                "Сначала составьте расписание"
-            )
-            return
-
-        file_name, ok = QFileDialog.getSaveFileName(
-            self,
-            "Сохранить расписание",
-            "raspisanie.txt",
-            "Текстовые файлы (*.txt)"
-        )
-
-        if not file_name:
-            return
-
-        if not file_name.lower().endswith(".txt"):
-            file_name += ".txt"
-
-        try:
-            with open(file_name, "w", encoding="utf-8") as file:
-                file.write(text)
-        except OSError as error:
-            QMessageBox.warning(
-                self,
-                "Ошибка",
-                f"Не удалось сохранить файл:\n{error}"
-            )
-            return
-
-        QMessageBox.information(
-            self,
-            "Готово",
-            "Расписание успешно сохранено"
-        )
+    def open_schedule(self):
+        date = self.selectedDateEdit.date()
+        dialog = ScheduleDialog(date)
+        dialog.exec()
