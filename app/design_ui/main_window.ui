@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>775</width>
-    <height>883</height>
+    <width>901</width>
+    <height>831</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -138,7 +138,7 @@ QPushButton#planDayButton:pressed {
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="toolTip">
@@ -148,7 +148,7 @@ QPushButton#planDayButton:pressed {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="todayTab">
        <property name="enabled">
@@ -509,7 +509,7 @@ QPushButton:pressed {
        <attribute name="title">
         <string>Канбан-доска</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="kanbanLabel">
           <property name="font">
@@ -526,20 +526,137 @@ QPushButton:pressed {
          </widget>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QComboBox" name="boardComboBox"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addBoardButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+    background-color: #F6C5D6;
+    color: #30232A;
+    border: 1px solid #F2B2C9;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+}
+
+QPushButton:hover {
+    background-color: #E8A5BA;
+}
+
+QPushButton:pressed {
+    background-color: #D98CA7;
+}
+
+QPushButton:disabled {
+    background-color: #F2E5EA;
+    color: #999999;
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Создать новую доску</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addColumnButton">
+            <property name="styleSheet">
+             <string notr="true">
+QPushButton {
+    background-color: #F6C5D6;
+    color: #30232A;
+    border: 1px solid #F2B2C9;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+}
+
+QPushButton:hover {
+    background-color: #E8A5BA;
+}
+
+QPushButton:pressed {
+    background-color: #D98CA7;
+}
+
+QPushButton:disabled {
+    background-color: #F2E5EA;
+    color: #999999;
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Добавить колонку</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addBoardTaskButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+    background-color: #F6C5D6;
+    color: #30232A;
+    border: 1px solid #F2B2C9;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+}
+
+QPushButton:hover {
+    background-color: #E8A5BA;
+}
+
+QPushButton:pressed {
+    background-color: #D98CA7;
+}
+
+QPushButton:disabled {
+    background-color: #F2E5EA;
+    color: #999999;
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Добавить задачу</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QGroupBox" name="todoGroupBox">
-            <property name="font">
-             <font>
-              <family>Georgia</family>
-              <pointsize>16</pointsize>
-              <weight>50</weight>
-              <italic>true</italic>
-              <bold>false</bold>
-             </font>
+           <widget class="QStackedWidget" name="boardStack">
+            <property name="currentIndex">
+             <number>1</number>
             </property>
-            <property name="styleSheet">
-             <string notr="true">QGroupBox {
+            <widget class="QWidget" name="standartBoardPage">
+             <widget class="QWidget" name="layoutWidget">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>940</width>
+                <height>262</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QGroupBox" name="todoGroupBox">
+                 <property name="font">
+                  <font>
+                   <family>Georgia</family>
+                   <pointsize>16</pointsize>
+                   <weight>50</weight>
+                   <italic>true</italic>
+                   <bold>false</bold>
+                  </font>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QGroupBox {
     background-color: #FFFFFF;
     color: #000000;
     border: 1px solid #D8D8D8;
@@ -557,48 +674,50 @@ QGroupBox::title {
     border-radius: 6px;
 }
   </string>
-            </property>
-            <property name="title">
-             <string>Нужно сделать</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QListWidget" name="todoList">
-               <property name="styleSheet">
-                <string notr="true">QListWidget {
-    background-color: #FAFAFA;
-    color: #000000;
-    border: 1px solid #E5E5E5;
-    border-radius: 7px;
-    padding: 5px;
+                 </property>
+                 <property name="title">
+                  <string>Нужно сделать</string>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QListWidget" name="todoList">
+                    <property name="styleSheet">
+                     <string notr="true">QListWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #E8C5D1;
+    border-radius: 10px;
 }
 
 QListWidget::item {
+    background-color: #FFF0F5;
+    color: #333333;
+    border: 1px solid #E8A5BA;
+    border-radius: 8px;
     padding: 10px;
-    border-bottom: 1px solid #EEEEEE;
+    margin: 5px;
 }
 
 QListWidget::item:selected {
-    background-color: #F8DDE6;
-    color: #000000;
+    background-color: #E8A5BA;
+    color: #333333;
 }</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="progressGroupBox">
-            <property name="font">
-             <font>
-              <family>Georgia</family>
-              <pointsize>16</pointsize>
-              <italic>true</italic>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QGroupBox {
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="progressGroupBox">
+                 <property name="font">
+                  <font>
+                   <family>Georgia</family>
+                   <pointsize>16</pointsize>
+                   <italic>true</italic>
+                  </font>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QGroupBox {
     background-color: #FFFFFF;
     color: #000000;
     border: 1px solid #D8D8D8;
@@ -616,48 +735,50 @@ QGroupBox::title {
     border-radius: 6px;
 }
   </string>
-            </property>
-            <property name="title">
-             <string>В процессе</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="QListWidget" name="progressList">
-               <property name="styleSheet">
-                <string notr="true">QListWidget {
-    background-color: #FAFAFA;
-    color: #000000;
-    border: 1px solid #E5E5E5;
-    border-radius: 7px;
-    padding: 5px;
+                 </property>
+                 <property name="title">
+                  <string>В процессе</string>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <item>
+                   <widget class="QListWidget" name="progressList">
+                    <property name="styleSheet">
+                     <string notr="true">QListWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #E8C5D1;
+    border-radius: 10px;
 }
 
 QListWidget::item {
+    background-color: #FFF0F5;
+    color: #333333;
+    border: 1px solid #E8A5BA;
+    border-radius: 8px;
     padding: 10px;
-    border-bottom: 1px solid #EEEEEE;
+    margin: 5px;
 }
 
 QListWidget::item:selected {
-    background-color: #F8DDE6;
-    color: #000000;
+    background-color: #E8A5BA;
+    color: #333333;
 }</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="doneGroupBox">
-            <property name="font">
-             <font>
-              <family>Georgia</family>
-              <pointsize>16</pointsize>
-              <italic>true</italic>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QGroupBox {
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="doneGroupBox">
+                 <property name="font">
+                  <font>
+                   <family>Georgia</family>
+                   <pointsize>16</pointsize>
+                   <italic>true</italic>
+                  </font>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QGroupBox {
     background-color: #FFFFFF;
     color: #000000;
     border: 1px solid #D8D8D8;
@@ -675,35 +796,67 @@ QGroupBox::title {
     border-radius: 6px;
 }
   </string>
-            </property>
-            <property name="title">
-             <string>Готово</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QListWidget" name="doneList">
-               <property name="styleSheet">
-                <string notr="true">QListWidget {
-    background-color: #FAFAFA;
-    color: #000000;
-    border: 1px solid #E5E5E5;
-    border-radius: 7px;
-    padding: 5px;
+                 </property>
+                 <property name="title">
+                  <string>Готово</string>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <item>
+                   <widget class="QListWidget" name="doneList">
+                    <property name="styleSheet">
+                     <string notr="true">QListWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #E8C5D1;
+    border-radius: 10px;
 }
 
 QListWidget::item {
+    background-color: #FFF0F5;
+    color: #333333;
+    border: 1px solid #E8A5BA;
+    border-radius: 8px;
     padding: 10px;
-    border-bottom: 1px solid #EEEEEE;
+    margin: 5px;
 }
 
 QListWidget::item:selected {
-    background-color: #F8DDE6;
-    color: #000000;
+    background-color: #E8A5BA;
+    color: #333333;
 }</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="customBoardPage">
+             <widget class="QScrollArea" name="customBoardScrollArea">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>1381</width>
+                <height>601</height>
+               </rect>
+              </property>
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+              <widget class="QWidget" name="scrollAreaWidgetContents">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>1379</width>
+                 <height>599</height>
+                </rect>
                </property>
               </widget>
-             </item>
-            </layout>
+             </widget>
+            </widget>
            </widget>
           </item>
          </layout>
@@ -879,7 +1032,7 @@ QProgressBar::chunk {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>775</width>
+     <width>901</width>
      <height>37</height>
     </rect>
    </property>

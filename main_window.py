@@ -1,11 +1,13 @@
 import sqlite3
 
 from PyQt6 import uic
-from PyQt6.QtCore import QDate, Qt, QTime
+from PyQt6.QtCore import QDate, Qt, QTime, QTimer, QSize
 from PyQt6.QtGui import QColor, QPixmap
 from PyQt6.QtWidgets import (
     QMainWindow, QDialog, QTableWidgetItem,
-    QHeaderView, QMessageBox, QFileDialog
+    QHeaderView, QMessageBox,
+    QListWidgetItem, QAbstractItemView, QInputDialog,
+    QHBoxLayout, QVBoxLayout, QGroupBox, QListWidget
 )
 from datetime import datetime, timedelta, time
 
@@ -21,19 +23,32 @@ class MainWindow(QMainWindow):
 
         uic.loadUi("app/design_ui/main_window.ui", self)
 
+        self.tabWidget.currentChanged.connect(self.show_progress)
+        self.show_progress(self.tabWidget.currentIndex())
+
+        self.user_boards = {}
+
+        self.customLayout = QHBoxLayout(
+            self.customBoardScrollArea.widget())
+
+        self.customLayout.setAlignment(
+            Qt.AlignmentFlag.AlignLeft)
+
+        self.customBoardScrollArea.setWidgetResizable(True)
+
+        self.kanban_loading = False
+
         image = QPixmap("app/pictch/win.jpg")
 
         image = image.scaled(
             180, 150,
             Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
-        )
+            Qt.TransformationMode.SmoothTransformation)
 
         self.tasksTable.horizontalHeader().setHighlightSections(False)
 
         self.tasksTable.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
-        )
+            QHeaderView.ResizeMode.Stretch)
 
         self.tasksTable.setWordWrap(True)
         self.planDayButton.clicked.connect(self.open_schedule)
@@ -44,16 +59,63 @@ class MainWindow(QMainWindow):
         self.selectedDateEdit.setDisplayFormat("dd.MM.yyyy")
         self.selectedDateEdit.dateChanged.connect(self.load_tasks)
 
+        self.addBoardButton.clicked.connect(self.add_board)
+        self.addColumnButton.clicked.connect(self.add_column)
+
+        self.boardComboBox.currentTextChanged.connect(
+            self.show_board)
+
+        self.boardStack.setCurrentIndex(0)
+        self.addColumnButton.setEnabled(False)
+
+        self.addBoardTaskButton.clicked.connect(self.add_board_task)
+        self.addBoardTaskButton.setEnabled(False)
+
         self.load_tasks()
 
         self.tasksTable.itemChanged.connect(self.change_task_status)
         self.tasksTable.itemSelectionChanged.connect(
-            self.show_description
-        )
+            self.show_description)
+
         self.deleteTaskButton.clicked.connect(self.delete_task)
         self.tasksTable.setSortingEnabled(False)
 
         self.categoriesAction.triggered.connect(self.open_categories)
+
+        for lst in (self.todoList, self.progressList, self.doneList):
+            lst.setDragEnabled(True)
+            lst.setAcceptDrops(True)
+            lst.viewport().setAcceptDrops(True)
+            lst.setDropIndicatorShown(True)
+            lst.setDragDropMode(
+                QAbstractItemView.DragDropMode.DragDrop
+            )
+            lst.setDefaultDropAction(Qt.DropAction.MoveAction)
+            lst.setSelectionMode(
+                QAbstractItemView.SelectionMode.SingleSelection
+            )
+            lst.setWordWrap(True)
+            lst.setTextElideMode(Qt.TextElideMode.ElideNone)
+
+        self.todoList.model().rowsInserted.connect(
+            lambda parent, first, last:
+            self.save_kanban_status(
+                self.todoList, "Нужно сделать", first, last))
+
+        self.progressList.model().rowsInserted.connect(
+            lambda parent, first, last:
+            self.save_kanban_status(
+                self.progressList, "В процессе", first, last))
+
+        self.doneList.model().rowsInserted.connect(
+            lambda parent, first, last:
+            self.save_kanban_status(
+                self.doneList, "Готово", first, last))
+
+        self.boardComboBox.addItem("Основная доска")
+        self.addBoardButton.clicked.connect(self.add_board)
+
+
 # открытие окна для добавления задачи + ее запись в БД
 
     def open_task_dialog(self):
@@ -190,6 +252,18 @@ class MainWindow(QMainWindow):
         else:
             self.tasksProgressBar.setValue(0)
             self.tasksProgressBar.setFormat("Нет задач")
+        self.load_kanban()
+
+        if self.boardComboBox.currentText() == "Основная доска":
+            self.load_kanban()
+
+    def show_progress(self, index):
+        if index == self.tabWidget.indexOf(self.todayTab):
+            self.progressLabel.show()
+            self.tasksProgressBar.show()
+        else:
+            self.progressLabel.hide()
+            self.tasksProgressBar.hide()
 
     def show_description(self):
         if not self.tasksTable.selectedItems():
@@ -378,6 +452,396 @@ class MainWindow(QMainWindow):
             connection.close()
 
             self.load_tasks()
+
+    def load_kanban(self):
+        self.kanban_loading = True
+
+        self.todoList.clear()
+        self.progressList.clear()
+        self.doneList.clear()
+
+        connection = sqlite3.connect("takt.db")
+        cursor = connection.cursor()
+
+        tasks = cursor.execute("""
+            SELECT id, title, task_date, status
+            FROM tasks
+            ORDER BY task_date, id
+        """).fetchall()
+
+        connection.close()
+
+        for task_id, title, date, status in tasks:
+            date_text = QDate.fromString(
+                date, "yyyy-MM-dd"
+            ).toString("dd.MM.yyyy")
+
+            item = QListWidgetItem(f"{title} ({date_text})")
+            item.setData(Qt.ItemDataRole.UserRole, task_id)
+            item.setSizeHint(QSize(0, 65))
+
+            if status == "Нужно сделать":
+                self.todoList.addItem(item)
+
+            elif status == "В процессе":
+                self.progressList.addItem(item)
+
+            elif status == "Готово":
+                self.doneList.addItem(item)
+
+        self.kanban_loading = False
+
+    def save_kanban_status(self, lst, status, first, last):
+        if self.kanban_loading:
+            return
+
+        QTimer.singleShot(
+            0,
+            lambda: self.finish_kanban_drop(lst, status)
+        )
+
+    def finish_kanban_drop(self, lst, status):
+        connection = sqlite3.connect("takt.db")
+        cursor = connection.cursor()
+
+        for row in range(lst.count()):
+            item = lst.item(row)
+            task_id = item.data(Qt.ItemDataRole.UserRole)
+
+            if task_id is not None:
+                cursor.execute(
+                    "UPDATE tasks SET status = ? WHERE id = ?",
+                    (status, task_id)
+                )
+
+        connection.commit()
+        connection.close()
+
+        self.load_tasks()
+
+    def add_board(self):
+        name, ok = QInputDialog.getText(
+            self,
+            "Новая доска",
+            "Введите название доски:"
+        )
+
+        if not ok:
+            return
+
+        name = name.strip()
+
+        if not name:
+            QMessageBox.warning(
+                self, "Ошибка", "Введите название доски"
+            )
+            return
+
+        if self.boardComboBox.findText(name) != -1:
+            QMessageBox.warning(
+                self, "Ошибка", "Такая доска уже существует"
+            )
+            return
+
+        self.user_boards[name] = {}
+
+        self.boardComboBox.addItem(name)
+        self.boardComboBox.setCurrentText(name)
+
+    def show_board(self, name):
+        if name == "Основная доска":
+            self.boardStack.setCurrentIndex(0)
+            self.addColumnButton.setEnabled(False)
+            self.addBoardTaskButton.setEnabled(False)
+            self.load_kanban()
+        else:
+            self.boardStack.setCurrentIndex(1)
+            self.addColumnButton.setEnabled(True)
+            self.addBoardTaskButton.setEnabled(True)
+            self.load_custom_board(name)
+
+    def load_custom_board(self, name):
+        while self.customLayout.count():
+            item = self.customLayout.takeAt(0)
+
+            if item.widget():
+                item.widget().deleteLater()
+
+        self.custom_lists = {}
+
+        connection = sqlite3.connect("takt.db")
+        cursor = connection.cursor()
+
+        tasks = cursor.execute("""
+            SELECT id, title, task_date
+            FROM tasks
+        """).fetchall()
+
+        connection.close()
+
+        task_data = {}
+
+        for task_id, title, date in tasks:
+            task_data[task_id] = (title, date)
+
+        for column, task_ids in self.user_boards[name].items():
+            group = QGroupBox(column)
+            group.setStyleSheet("""
+                QGroupBox {
+                    background-color: #FFFFFF;
+                    border: 1px solid #F2B2C9;
+                    border-radius: 12px;
+                    margin-top: 18px;
+                    padding: 10px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: #30232A;
+                }
+
+                QGroupBox::title {
+                    subcontrol-origin: margin;
+                    subcontrol-position: top center;
+                    background-color: #F6C5D6;
+                    padding: 5px 15px;
+                    border-radius: 7px;
+                }
+            """)
+
+            group.setMinimumWidth(200)
+            group.setMaximumWidth(240)
+
+            layout = QVBoxLayout(group)
+
+            lst = QListWidget()
+
+            lst.setStyleSheet("""
+                QListWidget {
+                    background-color: #FFFFFF;
+                    border: 1px solid #F5D3DF;
+                    border-radius: 10px;
+                }
+
+                QListWidget::item {
+                    background-color: #FFF0F5;
+                    color: #30232A;
+                    border: 1px solid #F2B2C9;
+                    border-radius: 7px;
+                    padding: 8px;
+                    margin: 4px;
+                }
+
+                QListWidget::item:selected {
+                    background-color: #E8A5BA;
+                }
+            """)
+
+            lst.setWordWrap(True)
+            lst.setTextElideMode(Qt.TextElideMode.ElideNone)
+
+            # Настраиваем перетаскивание
+            lst.setDragEnabled(True)
+            lst.setAcceptDrops(True)
+            lst.viewport().setAcceptDrops(True)
+            lst.setDropIndicatorShown(True)
+
+            lst.setDragDropMode(
+                QAbstractItemView.DragDropMode.DragDrop
+            )
+
+            lst.setDefaultDropAction(Qt.DropAction.MoveAction)
+
+            lst.setSelectionMode(
+                QAbstractItemView.SelectionMode.SingleSelection
+            )
+
+            # Добавляем карточки в колонку
+            for task_id in task_ids:
+                if task_id in task_data:
+                    title, date = task_data[task_id]
+
+                    date_text = QDate.fromString(
+                        date, "yyyy-MM-dd"
+                    ).toString("dd.MM.yyyy")
+
+                    item = QListWidgetItem(
+                        f"{title}\n{date_text}"
+                    )
+
+                    item.setSizeHint(QSize(0, 65))
+                    item.setData(
+                        Qt.ItemDataRole.UserRole, task_id
+                    )
+
+                    lst.addItem(item)
+
+            # Запоминаем список каждой колонки
+            self.custom_lists[column] = lst
+
+            # Отслеживаем добавление карточки после Drop
+            lst.model().rowsInserted.connect(
+                lambda parent, first, last,
+                board=name, col=column, target=lst:
+                self.custom_drop(board, col, target, first)
+            )
+
+            layout.addWidget(lst)
+            self.customLayout.addWidget(group)
+
+    def custom_drop(self, board, column, lst, row):
+        QTimer.singleShot(
+            0,
+            lambda: self.finish_custom_drop(
+                board, column, lst, row
+            )
+        )
+
+    def finish_custom_drop(self, board, column, lst, row):
+        if self.boardComboBox.currentText() != board:
+            return
+
+        if self.custom_lists.get(column) is not lst:
+            return
+
+        item = lst.item(row)
+
+        if item is None:
+            return
+
+        task_id = item.data(Qt.ItemDataRole.UserRole)
+
+        if task_id is None:
+            return
+
+        # Проверяем, что задача уже есть на этой доске
+        found = False
+
+        for task_ids in self.user_boards[board].values():
+            if task_id in task_ids:
+                found = True
+
+        if not found:
+            self.load_custom_board(board)
+            return
+
+        # Убираем задачу из прежней колонки
+        for task_ids in self.user_boards[board].values():
+            if task_id in task_ids:
+                task_ids.remove(task_id)
+
+        # Добавляем задачу в новую колонку
+        self.user_boards[board][column].append(task_id)
+
+        # Обновляем пользовательскую доску
+        self.load_custom_board(board)
+
+    def add_column(self):
+        board = self.boardComboBox.currentText()
+
+        if board == "Основная доска":
+            return
+
+        name, ok = QInputDialog.getText(
+            self,
+            "Новая колонка",
+            "Введите название колонки:"
+        )
+
+        if not ok:
+            return
+
+        name = name.strip()
+
+        if not name:
+            QMessageBox.warning(
+                self, "Ошибка", "Введите название колонки"
+            )
+            return
+
+        if name in self.user_boards[board]:
+            QMessageBox.warning(
+                self, "Ошибка", "Такая колонка уже существует"
+            )
+            return
+
+        self.user_boards[board][name] = []
+
+        self.load_custom_board(board)
+
+    def add_board_task(self):
+        board = self.boardComboBox.currentText()
+
+        if board == "Основная доска":
+            return
+
+        if not self.user_boards[board]:
+            QMessageBox.warning(
+                self, "Ошибка", "Сначала добавьте колонку"
+            )
+            return
+
+        connection = sqlite3.connect("takt.db")
+        cursor = connection.cursor()
+
+        tasks = cursor.execute("""
+            SELECT id, title
+            FROM tasks
+            ORDER BY id
+        """).fetchall()
+
+        connection.close()
+
+        used = []
+
+        for column in self.user_boards[board].values():
+            used.extend(column)
+
+        available = []
+
+        for task in tasks:
+            if task[0] not in used:
+                available.append(task)
+
+        if not available:
+            QMessageBox.warning(
+                self, "Ошибка", "Нет доступных задач"
+            )
+            return
+
+        names = []
+
+        for task_id, title in available:
+            names.append(f"{title} (ID: {task_id})")
+
+        name, ok = QInputDialog.getItem(
+            self,
+            "Добавление задачи",
+            "Выберите задачу:",
+            names,
+            0,
+            False
+        )
+
+        if not ok:
+            return
+
+        task_id = available[names.index(name)][0]
+
+        column, ok = QInputDialog.getItem(
+            self,
+            "Выбор колонки",
+            "В какую колонку добавить задачу?",
+            list(self.user_boards[board]),
+            0,
+            False
+        )
+
+        if not ok:
+            return
+
+        self.user_boards[board][column].append(task_id)
+
+        self.load_custom_board(board)
+
 # открытие окна создания категории задач
 
     def open_categories(self):
