@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>901</width>
-    <height>831</height>
+    <height>829</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -148,7 +148,7 @@ QPushButton#planDayButton:pressed {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="todayTab">
        <property name="enabled">
@@ -244,6 +244,7 @@ QPushButton#planDayButton:pressed {
            <widget class="QPushButton" name="addTaskButton">
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>-1</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -266,6 +267,12 @@ QPushButton:hover {
 
 QPushButton:pressed {
     background-color: #CC7E99;
+}
+QPushButton {
+    font-family: &quot;Arial&quot;;
+    font-size: 15px;
+    font-weight: bold;
+    color: #30232A;
 }</string>
             </property>
             <property name="text">
@@ -277,6 +284,7 @@ QPushButton:pressed {
            <widget class="QPushButton" name="editTaskButton">
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>-1</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -299,6 +307,12 @@ QPushButton:hover {
 
 QPushButton:pressed {
     background-color: #DB9BAF;
+}
+QPushButton {
+    font-family: &quot;Arial&quot;;
+    font-size: 15px;
+    font-weight: bold;
+    color: #30232A;
 }</string>
             </property>
             <property name="text">
@@ -310,6 +324,7 @@ QPushButton:pressed {
            <widget class="QPushButton" name="deleteTaskButton">
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>-1</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -328,6 +343,12 @@ QPushButton:pressed {
 
 QPushButton:hover {
     background-color: #F1C9D7;
+}
+QPushButton {
+    font-family: &quot;Arial&quot;;
+    font-size: 15px;
+    font-weight: bold;
+    color: #30232A;
 }</string>
             </property>
             <property name="text">
@@ -1048,6 +1069,7 @@ QProgressBar::chunk {
      <string>Настройки</string>
     </property>
     <addaction name="categoriesAction"/>
+    <addaction name="themeAction"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -1055,6 +1077,16 @@ QProgressBar::chunk {
   <action name="categoriesAction">
    <property name="text">
     <string>Категории</string>
+   </property>
+  </action>
+  <action name="themeAction">
+   <property name="text">
+    <string>Оформление</string>
+   </property>
+  </action>
+  <action name="resetThemeAction">
+   <property name="text">
+    <string>Сбросить цвет</string>
    </property>
   </action>
  </widget>

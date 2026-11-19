@@ -8,26 +8,22 @@ from PyQt6.QtWidgets import QDialog
 class TaskDialog(QDialog):
     def __init__(self):
         super().__init__()
-
         uic.loadUi("app/design_ui/task_dialog.ui", self)
-        self.taskTimeEdit.setEnabled(False)
 
+        self.taskTimeEdit.setEnabled(False)
         self.fixedTimeCheckBox.toggled.connect(self.taskTimeEdit.setEnabled)
         self.taskDateEdit.setDate(QDate.currentDate())
         self.taskDateEdit.setDisplayFormat("dd.MM.yyyy")
 
         connection = sqlite3.connect("takt.db")
         cursor = connection.cursor()
-
         categories = cursor.execute(
             "SELECT name FROM categories ORDER BY name"
         ).fetchall()
-
         connection.close()
 
         self.categoryComboBox.clear()
         self.categoryComboBox.addItem("Без категории")
-
         for category in categories:
             self.categoryComboBox.addItem(category[0])
 
