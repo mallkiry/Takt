@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QDialog
 
 
+# окно с поздравлением после выполнения всех задач
 class SuccessDialog(QDialog):
     def __init__(self):
         super().__init__()

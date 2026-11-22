@@ -510,7 +510,8 @@ class MainWindow(QMainWindow):
                     padding: 5px 15px;
                     border-radius: 7px;
                 }
-            """)
+            """.replace("#F6C5D6", self.main_color)
+                .replace("#F2B2C9", self.main_color))
             group.setMinimumWidth(200)
             group.setMaximumWidth(240)
             layout = QVBoxLayout(group)
@@ -532,7 +533,13 @@ class MainWindow(QMainWindow):
                 QListWidget::item:selected {
                     background-color: #E8A5BA;
                 }
-            """)
+            """.replace("#F5D3DF", self.main_color)
+               .replace("#F2B2C9", self.main_color)
+               .replace("#E8A5BA", self.main_color)
+               .replace(
+                   "#FFF0F5",
+                   QColor(self.main_color).lighter(155).name()
+            ))
 
             lst.setWordWrap(True)
             lst.setDragEnabled(True)
@@ -678,7 +685,7 @@ class MainWindow(QMainWindow):
         self.load_tasks()
 
     def open_schedule(self):
-        date = self.selectedDateEdit.date()
+        date = QDate.currentDate()
         dialog = ScheduleDialog(date)
         dialog.exec()
 
@@ -740,7 +747,7 @@ class MainWindow(QMainWindow):
             self.calendarTasksList.addItem(item)
 
     def mark_calendar_dates(self):
-        # Убираем старые выделения
+
         for date in self.calendar_dates:
             day = QDate.fromString(date, "yyyy-MM-dd")
             self.calendarWidget.setDateTextFormat(
@@ -749,7 +756,6 @@ class MainWindow(QMainWindow):
 
         self.calendar_dates = []
 
-        # Получаем даты всех задач
         con = sqlite3.connect("takt.db")
         cur = con.cursor()
 
@@ -760,12 +766,10 @@ class MainWindow(QMainWindow):
 
         con.close()
 
-        # Настраиваем цвет выделения
         fmt = QTextCharFormat()
         fmt.setBackground(QBrush(QColor(self.main_color)))
         fmt.setForeground(QBrush(QColor("#30232A")))
 
-        # Выделяем дни с задачами
         for row in dates:
             date = row[0]
             day = QDate.fromString(date, "yyyy-MM-dd")
@@ -787,6 +791,10 @@ class MainWindow(QMainWindow):
             "main_color", self.main_color
         )
         self.apply_app_color(self.main_color)
+
+        board = self.boardComboBox.currentText()
+        if board in self.user_boards:
+            self.load_custom_board(board)
 
     def apply_app_color(self, color):
         main = QColor(color)
@@ -828,7 +836,6 @@ class MainWindow(QMainWindow):
             }}
         """)
 
-        # Меняем цвет кнопок
         buttons = [
             self.addTaskButton,
             self.editTaskButton,
@@ -860,7 +867,6 @@ class MainWindow(QMainWindow):
                 }}
             """)
 
-        # Меняем цвет вкладок
         self.tabWidget.setStyleSheet(f"""
             QTabBar::tab {{
                 background-color: {light};
@@ -875,7 +881,6 @@ class MainWindow(QMainWindow):
             }}
         """)
 
-        # Цвет полей выбора
         self.selectedDateEdit.setStyleSheet(f"""
             QDateEdit {{
                 background-color: white;
@@ -894,7 +899,6 @@ class MainWindow(QMainWindow):
             }}
         """)
 
-        # Цвет прогресса
         self.tasksProgressBar.setStyleSheet(f"""
             QProgressBar {{
                 border: 1px solid {color};
@@ -908,7 +912,6 @@ class MainWindow(QMainWindow):
             }}
         """)
 
-        # Оформление календаря
         self.calendarWidget.setStyleSheet(f"""
             QCalendarWidget QWidget#qt_calendar_navigationbar {{
                 background-color: {color};
@@ -927,11 +930,9 @@ class MainWindow(QMainWindow):
             }}
         """)
 
-        # Обновляем выделенные даты
         if hasattr(self, "calendar_dates"):
             self.mark_calendar_dates()
 
-        # Цвет колонок основной канбан-доски
         groups = [
             self.todoGroupBox,
             self.progressGroupBox,

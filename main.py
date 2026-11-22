@@ -11,18 +11,16 @@ from main_window import MainWindow
 app = QApplication(sys.argv)
 window = MainWindow()
 
-def show_window():
-    window.showMaximized()
-    window.raise_()
-    window.activateWindow()
 
 def show_today():
     window.tabWidget.setCurrentWidget(window.todayTab)
-    show_window()
+    window.showMaximized()
+
 
 def add_task():
     show_today()
     window.open_task_dialog()
+
 
 def load_today_tasks():
     today_menu.clear()
@@ -53,14 +51,12 @@ def load_today_tasks():
         f"Сегодня: {len(tasks)} задач | Готово: {done}"
     )
     header.setEnabled(False)
-    today_menu.addSeparator()
 
     if not tasks:
         empty = today_menu.addAction("На сегодня задач нет")
         empty.setEnabled(False)
         return
 
-    # Добавляем задачи в меню
     for title, start_time, status, color in tasks:
         if start_time:
             time = start_time
@@ -74,7 +70,7 @@ def load_today_tasks():
         if not color or not QColor(color).isValid():
             color = "#CCCCCC"
 
-        picture = QPixmap(16, 16)
+        picture = QPixmap(15, 15)
         picture.fill(Qt.GlobalColor.transparent)
 
         painter = QPainter(picture)
@@ -84,18 +80,18 @@ def load_today_tasks():
 
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(QColor(color))
-        painter.drawEllipse(2, 2, 12, 12)
+        painter.drawEllipse(1, 1, 13, 13)
 
         painter.end()
         action.setIcon(QIcon(picture))
 
-    today_menu.addSeparator()
     percent = int(done / len(tasks) * 100)
 
     progress = today_menu.addAction(
         f"Выполнено: {percent}%"
     )
     progress.setEnabled(False)
+
 
 if QSystemTrayIcon.isSystemTrayAvailable():
     app.setQuitOnLastWindowClosed(False)
@@ -129,7 +125,7 @@ if QSystemTrayIcon.isSystemTrayAvailable():
     tray = QSystemTrayIcon(QIcon(picture), window)
     tray.setToolTip("Takt — планировщик задач")
 
-    # Создаём меню
+    # меню
     menu = QMenu(window)
     menu.setStyleSheet("""
         QMenu {
@@ -158,13 +154,13 @@ if QSystemTrayIcon.isSystemTrayAvailable():
         }
     """)
 
-    # Пункты меню
+    # пункты меню
     open_action = menu.addAction("Открыть Takt")
     today_menu = menu.addMenu("Мой день")
     add_action = menu.addAction("Добавить задачу")
-    menu.addSeparator()
     exit_action = menu.addAction("Выйти")
-    open_action.triggered.connect(show_window)
+
+    open_action.triggered.connect(window.showMaximized)
     today_menu.aboutToShow.connect(load_today_tasks)
     add_action.triggered.connect(add_task)
     exit_action.triggered.connect(app.quit)

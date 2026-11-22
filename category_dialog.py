@@ -18,9 +18,10 @@ class CategoryDialog(QDialog):
         self.deleteCategoryButton.clicked.connect(self.delete_category)
 
         self.load_categories()
-# загрузка категорий в БД
 
+    # загрузка категорий из БД
     def load_categories(self):
+
         connection = sqlite3.connect("takt.db")
         cursor = connection.cursor()
         categories = cursor.execute(
@@ -38,7 +39,7 @@ class CategoryDialog(QDialog):
         self.categoriesList.setCurrentRow(-1)
         self.categoriesList.clearSelection()
 
-# добавление категорий
+    # добавление категорий
     def add_category(self):
         name, ok = QInputDialog.getText(
             self, "Новая категория", "Введите название категории:")
@@ -62,12 +63,14 @@ class CategoryDialog(QDialog):
                 self, "Ошибка", "Такая категория уже существует")
             connection.close()
             return
+
         cursor.execute(
             "INSERT INTO categories (name) VALUES (?)", (name,))
         connection.commit()
         connection.close()
         self.load_categories()
 
+    # их переименование
     def rename_category(self):
         items = self.categoriesList.selectedItems()
         if not items:
@@ -115,6 +118,7 @@ class CategoryDialog(QDialog):
         connection.close()
         self.load_categories()
 
+    # удаление категорий
     def delete_category(self):
         items = self.categoriesList.selectedItems()
         if not items:
@@ -156,6 +160,7 @@ class CategoryDialog(QDialog):
         connection.close()
         self.load_categories()
 
+    # изменение цвета
     def change_category_color(self):
         items = self.categoriesList.selectedItems()
         if not items:
