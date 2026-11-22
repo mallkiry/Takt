@@ -675,6 +675,7 @@ class MainWindow(QMainWindow):
     def open_categories(self):
         dialog = CategoryDialog()
         dialog.exec()
+        self.load_tasks()
 
     def open_schedule(self):
         date = self.selectedDateEdit.date()
@@ -761,7 +762,7 @@ class MainWindow(QMainWindow):
 
         # Настраиваем цвет выделения
         fmt = QTextCharFormat()
-        fmt.setBackground(QBrush(QColor("#F6C5D6")))
+        fmt.setBackground(QBrush(QColor(self.main_color)))
         fmt.setForeground(QBrush(QColor("#30232A")))
 
         # Выделяем дни с задачами

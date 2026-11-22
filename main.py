@@ -11,27 +11,19 @@ from main_window import MainWindow
 app = QApplication(sys.argv)
 window = MainWindow()
 
-
-# Открываем главное окно
 def show_window():
     window.showMaximized()
     window.raise_()
     window.activateWindow()
 
-
-# Открываем вкладку "Мой день"
 def show_today():
     window.tabWidget.setCurrentWidget(window.todayTab)
     show_window()
 
-
-# Открываем окно создания задачи
 def add_task():
     show_today()
     window.open_task_dialog()
 
-
-# Загружаем задачи на сегодняшний день
 def load_today_tasks():
     today_menu.clear()
 
@@ -39,7 +31,6 @@ def load_today_tasks():
 
     con = sqlite3.connect("takt.db")
     cur = con.cursor()
-
     tasks = cur.execute("""
         SELECT tasks.title, tasks.start_time,
                tasks.status, categories.color
@@ -50,22 +41,18 @@ def load_today_tasks():
         ORDER BY tasks.start_time IS NULL,
                  tasks.start_time, tasks.id
     """, (date,)).fetchall()
-
     con.close()
 
-    # Считаем выполненные задачи
     done = 0
 
     for title, start_time, status, color in tasks:
         if status == "Готово":
             done += 1
 
-    # Заголовок меню
     header = today_menu.addAction(
         f"Сегодня: {len(tasks)} задач | Готово: {done}"
     )
     header.setEnabled(False)
-
     today_menu.addSeparator()
 
     if not tasks:
@@ -79,19 +66,14 @@ def load_today_tasks():
             time = start_time
         else:
             time = "Без времени"
-
         text = f"{time}  |  {title}"
-
         if status == "Готово":
             text += " (готово)"
-
         action = today_menu.addAction(text)
 
-        # Проверяем цвет категории
         if not color or not QColor(color).isValid():
             color = "#CCCCCC"
 
-        # Создаём изображение для кружка
         picture = QPixmap(16, 16)
         picture.fill(Qt.GlobalColor.transparent)
 
@@ -105,13 +87,9 @@ def load_today_tasks():
         painter.drawEllipse(2, 2, 12, 12)
 
         painter.end()
-
-        # Добавляем цветной кружок перед задачей
         action.setIcon(QIcon(picture))
 
     today_menu.addSeparator()
-
-    # Показываем процент выполнения
     percent = int(done / len(tasks) * 100)
 
     progress = today_menu.addAction(
@@ -119,12 +97,9 @@ def load_today_tasks():
     )
     progress.setEnabled(False)
 
-
-# Настраиваем системный трей
 if QSystemTrayIcon.isSystemTrayAvailable():
     app.setQuitOnLastWindowClosed(False)
 
-    # Создаём значок Takt
     picture = QPixmap(32, 32)
     picture.fill(Qt.GlobalColor.transparent)
 
@@ -149,17 +124,13 @@ if QSystemTrayIcon.isSystemTrayAvailable():
         Qt.AlignmentFlag.AlignCenter,
         "T"
     )
-
     painter.end()
 
-    # Создаём трей
     tray = QSystemTrayIcon(QIcon(picture), window)
     tray.setToolTip("Takt — планировщик задач")
 
     # Создаём меню
     menu = QMenu(window)
-
-    # Розовое оформление меню
     menu.setStyleSheet("""
         QMenu {
             background-color: #FFF7FA;
@@ -189,30 +160,17 @@ if QSystemTrayIcon.isSystemTrayAvailable():
 
     # Пункты меню
     open_action = menu.addAction("Открыть Takt")
-
     today_menu = menu.addMenu("Мой день")
-
     add_action = menu.addAction("Добавить задачу")
-
     menu.addSeparator()
-
     exit_action = menu.addAction("Выйти")
-
-    # Подключаем действия
     open_action.triggered.connect(show_window)
-
     today_menu.aboutToShow.connect(load_today_tasks)
-
     add_action.triggered.connect(add_task)
-
     exit_action.triggered.connect(app.quit)
-
-    # Показываем значок в трее
     tray.setContextMenu(menu)
     tray.show()
 
-
-# Запускаем приложение на вкладке "Мой день"
 window.tabWidget.setCurrentWidget(window.todayTab)
 window.showMaximized()
 
