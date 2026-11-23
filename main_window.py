@@ -1,7 +1,7 @@
 import sqlite3
 
 from PyQt6 import uic
-from PyQt6.QtCore import QDate, Qt, QTime, QTimer, QSize, QSettings
+from PyQt6.QtCore import QDate, Qt, QTime, QTimer, QSize
 from PyQt6.QtGui import QColor, QPixmap, QPainter, QIcon, QBrush, QTextCharFormat
 from PyQt6.QtWidgets import (
     QMainWindow, QDialog, QTableWidgetItem,
@@ -26,10 +26,7 @@ class MainWindow(QMainWindow):
         self.calendarWidget.selectionChanged.connect(self.load_calendar_tasks)
         self.calendar_dates = []
 
-        self.settings = QSettings("Takt", "Takt")
-        self.main_color = self.settings.value(
-            "main_color", "#F6C5D6"
-        )
+        self.main_color = "#F6C5D6"
         self.themeAction.triggered.connect(
             self.change_app_color
         )
@@ -93,7 +90,7 @@ class MainWindow(QMainWindow):
         self.tasksTable.itemSelectionChanged.connect(self.show_description)
 
         self.tabWidget.currentChanged.connect(self.show_progress)
-# открытие окна для создания задачи
+    # открытие окна для создания задачи
 
     def open_task_dialog(self):
         dialog = TaskDialog()
@@ -137,7 +134,7 @@ class MainWindow(QMainWindow):
 
             print("Задача")
             self.load_tasks()
-# изменение задачи
+    # изменение задачи
 
     def edit_task(self):
         row = self.tasksTable.currentRow()
@@ -219,7 +216,7 @@ class MainWindow(QMainWindow):
             connection.close()
 
             self.load_tasks()
-# выгрузка + заполнение таблицы
+    # выгрузка + заполнение таблицы
 
     def load_tasks(self):
         date = self.selectedDateEdit.date().toString("yyyy-MM-dd")
@@ -295,7 +292,7 @@ class MainWindow(QMainWindow):
             self.load_kanban()
         self.load_calendar_tasks()
         self.mark_calendar_dates()
-# удаление
+    # удаление
 
     def delete_task(self):
         row = self.tasksTable.currentRow()
@@ -320,7 +317,7 @@ class MainWindow(QMainWindow):
             connection.commit()
             connection.close()
             self.load_tasks()
-# флажок готовносссти задачи
+    # флажок готовносссти задачи
 
     def change_task_status(self, item):
         if item.column() != 0:
@@ -353,7 +350,7 @@ class MainWindow(QMainWindow):
         if total > 0 and done == total:
             dialog = SuccessDialog()
             dialog.exec()
-# прогресс бар
+    # прогресс бар
 
     def show_progress(self, index):
         if index == self.tabWidget.indexOf(self.todayTab):
@@ -362,7 +359,7 @@ class MainWindow(QMainWindow):
         else:
             self.progressLabel.hide()
             self.tasksProgressBar.hide()
-# виузал описания задачи
+    # виузал описания задачи
 
     def show_description(self):
         if not self.tasksTable.selectedItems():
@@ -384,7 +381,7 @@ class MainWindow(QMainWindow):
             self.descriptionBrowser.setMarkdown(task[0])
         else:
             self.descriptionBrowser.setPlainText("У этой задачи нет описания")
-# заполнение канбан доски
+    # заполнение канбан доски
 
     def load_kanban(self):
         self.kanban_loading = True
@@ -416,13 +413,13 @@ class MainWindow(QMainWindow):
                 self.doneList.addItem(item)
 
         self.kanban_loading = False
-# ожидание сохранения
+        # ожидание сохранения
 
     def save_kanban_status(self, lst, status):
         if self.kanban_loading:
             return
         QTimer.singleShot(0, lambda: self.finish_kanban_drop(lst, status))
-# сохранения изменения статуса в бд после канбан
+    # сохранения изменения статуса в бд после канбан
 
     def finish_kanban_drop(self, lst, status):
         connection = sqlite3.connect("takt.db")
@@ -437,7 +434,7 @@ class MainWindow(QMainWindow):
         connection.commit()
         connection.close()
         self.load_tasks()
-# добавление доски
+    # добавление доски
 
     def add_board(self):
         name, ok = QInputDialog.getText(
@@ -456,7 +453,7 @@ class MainWindow(QMainWindow):
         self.user_boards[name] = {}
         self.boardComboBox.addItem(name)
         self.boardComboBox.setCurrentText(name)
-# визуал досок
+    # визуал досок
 
     def show_board(self, name):
         if name == "Основная доска":
@@ -469,7 +466,7 @@ class MainWindow(QMainWindow):
             self.addColumnButton.setEnabled(True)
             self.addBoardTaskButton.setEnabled(True)
             self.load_custom_board(name)
-# визуал новой доски
+    # визуал новой доски
 
     def load_custom_board(self, name):
         while self.customLayout.count():
@@ -564,12 +561,12 @@ class MainWindow(QMainWindow):
                 self.custom_drop(board, col, target, first))
             layout.addWidget(lst)
             self.customLayout.addWidget(group)
-# ожидание сохранения
+    # ожидание сохранения
 
     def custom_drop(self, board, column, lst, row):
         QTimer.singleShot(0, lambda: self.finish_custom_drop(
             board, column, lst, row))
-# добавление задач между колонками
+    # добавление задач между колонками
 
     def finish_custom_drop(self, board, column, lst, row):
         if self.boardComboBox.currentText() != board:
@@ -596,7 +593,7 @@ class MainWindow(QMainWindow):
                 task_ids.remove(task_id)
         self.user_boards[board][column].append(task_id)
 
-# добавление колонок
+    # добавление колонок
 
     def add_column(self):
         board = self.boardComboBox.currentText()
@@ -622,7 +619,7 @@ class MainWindow(QMainWindow):
 
         self.user_boards[board][name] = []
         self.load_custom_board(board)
-# добавление задач в колонку
+    # добавление задач в колонку
 
     def add_board_task(self):
         board = self.boardComboBox.currentText()
@@ -679,15 +676,18 @@ class MainWindow(QMainWindow):
         self.user_boards[board][column].append(task_id)
         self.load_custom_board(board)
 
+    # окно категорий
     def open_categories(self):
         dialog = CategoryDialog()
         dialog.exec()
         self.load_tasks()
+    # окно расписания
 
     def open_schedule(self):
         date = QDate.currentDate()
         dialog = ScheduleDialog(date)
         dialog.exec()
+    # цветной календарь
 
     def load_calendar_tasks(self):
         date = self.calendarWidget.selectedDate().toString("yyyy-MM-dd")
@@ -745,6 +745,7 @@ class MainWindow(QMainWindow):
             item.setIcon(QIcon(picture))
 
             self.calendarTasksList.addItem(item)
+    # отметки дат с задачами в календаре
 
     def mark_calendar_dates(self):
 
@@ -766,16 +767,16 @@ class MainWindow(QMainWindow):
 
         con.close()
 
-        fmt = QTextCharFormat()
-        fmt.setBackground(QBrush(QColor(self.main_color)))
-        fmt.setForeground(QBrush(QColor("#30232A")))
+        fomt = QTextCharFormat()
+        fomt.setBackground(QBrush(QColor(self.main_color)))
+        fomt.setForeground(QBrush(QColor("#30232A")))
 
         for row in dates:
             date = row[0]
             day = QDate.fromString(date, "yyyy-MM-dd")
 
             if day.isValid():
-                self.calendarWidget.setDateTextFormat(day, fmt)
+                self.calendarWidget.setDateTextFormat(day, fomt)
                 self.calendar_dates.append(date)
 
     def change_app_color(self):
@@ -787,9 +788,6 @@ class MainWindow(QMainWindow):
         if not color.isValid():
             return
         self.main_color = color.name()
-        self.settings.setValue(
-            "main_color", self.main_color
-        )
         self.apply_app_color(self.main_color)
 
         board = self.boardComboBox.currentText()
