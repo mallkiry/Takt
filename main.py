@@ -1,5 +1,29 @@
 import sys
 import sqlite3
+import os
+import shutil
+
+if getattr(sys, "frozen", False):
+    folder = os.path.expanduser(
+        "~/Library/Application Support/Takt"
+    )
+    os.makedirs(folder, exist_ok=True)
+
+    shutil.copytree(
+        os.path.join(sys._MEIPASS, "app"),
+        os.path.join(folder, "app"),
+        dirs_exist_ok=True
+    )
+
+    db = os.path.join(folder, "takt.db")
+    if not os.path.exists(db):
+        shutil.copy2(
+            os.path.join(sys._MEIPASS, "takt.db"),
+            db
+        )
+
+    os.chdir(folder)
+
 
 from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtGui import QColor, QFont, QIcon, QPainter, QPixmap
