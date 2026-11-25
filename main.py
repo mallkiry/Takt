@@ -3,7 +3,7 @@ import sqlite3
 import os
 import shutil
 
-if getattr(sys, "frozen", False):
+if getattr(sys, "frozen", False) and sys.platform == "darwin":
     folder = os.path.expanduser(
         "~/Library/Application Support/Takt"
     )
